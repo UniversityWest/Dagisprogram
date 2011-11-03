@@ -21,12 +21,12 @@ import javax.swing.event.ListDataListener;
 
 import com.alex.dagis.data.DataSourceCommitException;
 
-public class MainView extends JFrame {
+public class MainView extends JFrame { 
 	private JList<Kindergarten> mList;
 	private List<Kindergarten> mGroups;
 	private class KGDataModel implements ListModel<Kindergarten>{
 		
-		@Override
+		@Override 
 		public void removeListDataListener(ListDataListener arg0) {
 			// TODO Auto-generated method stub
 			
@@ -78,7 +78,63 @@ public class MainView extends JFrame {
 		btnPanel.add(removeClass); 
 		mList = new JList<Kindergarten>();
 		
+		JButton btnParents = new JButton("Föräldrar");
+		btnPanel.add(btnParents);
 		
+		btnParents.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				ParentList pl = new ParentList();
+				pl.addWindowListener(new WindowListener() {
+					
+					@Override
+					public void windowOpened(WindowEvent e) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void windowIconified(WindowEvent e) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void windowDeiconified(WindowEvent e) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void windowDeactivated(WindowEvent e) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void windowClosing(WindowEvent e) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void windowClosed(WindowEvent e) {
+						// TODO Auto-generated method stub
+						Parent p = ((AddParent)e.getSource()).getResult();
+						
+					}
+					
+					@Override
+					public void windowActivated(WindowEvent e) {
+						// TODO Auto-generated method stub
+						
+					}
+				});
+				pl.show();
+			}
+		});
 		// Bind the list to the datasource
 		mGroups = Dagis.dataSource.getKindergartens();
 		
@@ -167,6 +223,7 @@ mKG.addWindowListener(new WindowListener() {
 				});
 			}
 		});
+		
 		addClass.addActionListener(new ActionListener() {
 			
 			@Override

@@ -4,6 +4,7 @@ import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.FileInputStream;
 
 import javax.swing.JButton;
@@ -13,6 +14,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import com.alex.dagis.Child.NoParentException;
 import com.alex.dagis.ChildTooOldException;
 import com.alex.dagis.data.DataSourceCommitException;
 
@@ -61,22 +63,88 @@ public class AddChild extends JFrame {
 		// Update the controls for the child
 		if(mChild != null)
 		{
-			lParentID.setText(String.valueOf(mChild.getParent().getSSN()));
-			lAge.setText(String.valueOf(mChild.getAge()));
-			lChildFirstName.setText(mChild.getFirstName());
-			lChildLastName.setText(mChild.getSurName());
+			try{
+				lParentID.setText(String.valueOf(mChild.getParent().getSSN()));
+			}catch(Exception e){
+				
+			}
+			tAge.setText(String.valueOf(mChild.getAge()));
+			tChildFirstName.setText(mChild.getFirstName());
+			tChildLastName.setText(mChild.getSurName());
 		}
 	}
 	/***
 	 * Sets the parent here
 	 * @param parentID
+	 * @throws NoParentException 
 	 */
-	protected void setParent(int parentID)
+	protected void setParent(int parentID) throws NoParentException
 	{
 		// TODO: Add parent insertion here
 		if(mChild != null)
 		{
-			mChild.setParent(parentID);
+			try {
+				mChild.setParent(parentID);
+			} catch (NoParentException e) {
+				// TODO Auto-generated catch block
+				// Tell the user that no parent where found, but ask if the user want to assign it from here to
+				// simplificate the workflow
+				switch(JOptionPane.showConfirmDialog(this, "Det finns ingen förälder som matchar ID. Vill du lägga in denna förälder?"))
+				{
+					case JOptionPane.YES_OPTION:
+						// Show an new dialog
+						final AddParent ap = new AddParent(this);
+						ap.addWindowListener(new WindowListener() {
+							
+							@Override
+							public void windowOpened(WindowEvent e) {
+								// TODO Auto-generated method stub
+								
+							}
+							
+							@Override
+							public void windowIconified(WindowEvent e) {
+								// TODO Auto-generated method stub
+								
+							}
+							
+							@Override
+							public void windowDeiconified(WindowEvent e) {
+								// TODO Auto-generated method stub
+								
+							}
+							
+							@Override
+							public void windowDeactivated(WindowEvent e) {
+								// TODO Auto-generated method stub
+								
+							}
+							
+							@Override
+							public void windowClosing(WindowEvent e) {
+								// TODO Auto-generated method stub
+								
+							}
+							
+							@Override
+							public void windowClosed(WindowEvent e) {
+								// TODO Auto-generated method stub
+								
+							}
+							
+							@Override
+							public void windowActivated(WindowEvent e) {
+								// TODO Auto-generated method stub
+								
+							}
+						});
+						ap.show();
+						break;
+				}
+				e.printStackTrace();
+				
+				throw mChild.new NoParentException();
+			}
 		}
 	}
 	/***
@@ -112,9 +180,11 @@ public class AddChild extends JFrame {
 			mChild.setFirstName(tChildFirstName.getText());
 			mChild.setSurName(tChildLastName.getText());
 			mChild.setGroup(mGroup.getID());
-			
-			setParent(Integer.valueOf(tParentID.getText()));
-			
+			try{
+				setParent(Integer.valueOf(tParentID.getText()));
+			}catch(Exception e){
+				return;
+			}
 			Dagis.dataSource.commit();
 			
 			// Close the form

@@ -25,7 +25,7 @@ import javax.swing.ListModel;
 import javax.swing.event.ListDataListener;
 
 import com.alex.dagis.data.DataSourceLoadException;
-/*****
+/***** 
  * Window for selecting an group within an Kindergarten
  * @author Alexander
  *

@@ -92,7 +92,7 @@ public class ChildList extends JFrame {
 			switch(columnIndex)
 			{
 			case COLUMN_NAME:
-				return String.class;
+				return Child.class;
 			case COLUMN_BORN_YEAR:
 				return Integer.class;
 			}

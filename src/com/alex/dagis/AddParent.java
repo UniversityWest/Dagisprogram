@@ -12,6 +12,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import com.alex.dagis.Parent.TwoParentSameSSNException;
 import com.alex.dagis.data.DataSourceCommitException;
 
 
@@ -61,7 +62,20 @@ public class AddParent extends JFrame {
 			lParentLastName.setText(mParent.getSurName());
 		}
 	}
-	
+	AddChild mChildDialog;
+	/***
+	 * This is an constructor used as an shortcut way for
+	 * users to assign an parent to an child which previously were
+	 * not present in the system before, to speed up the users
+	 * work flow.
+	 * @param addChild
+	 */
+	public AddParent(AddChild addChild) {
+		// TODO Auto-generated constructor stub
+		createControls();
+		mChildDialog = addChild;
+		
+	}
 	/***
 	 * Saves the Parent into the RAM
 	 */
@@ -69,7 +83,7 @@ public class AddParent extends JFrame {
 	{
 		/**
 		 * If the mParent is null,
-		 * create an new Parent,
+		 * create an new Parent, 
 		 * otherwise modify an existing one
 		 */
 		try
@@ -87,18 +101,28 @@ public class AddParent extends JFrame {
 				
 				
 			}
+			
 			// Try assert the Parent for it's age, but if age is more than the allowed one (seven year),
 			// the Parent is not eligible for kindergarten and should thereof warn the user and stop
 			// the operation
-			
 			mParent.setFirstName(tParentFirstName.getText());
 			mParent.setSurName(tParentLastName.getText());
+			try{
+				mParent.setID(Integer.valueOf(tSSN.getText()));
 			
+			}catch(NumberFormatException e){
+				JOptionPane.showMessageDialog(this, "Ett nummer måste skrivas in");
+				return;
+			}catch(TwoParentSameSSNException e){
+				JOptionPane.showMessageDialog(this, "Två barn får inte ha samma personnummer");
+				return;
+			}
 			Dagis.dataSource.commit();
 			
 			// Close the form
-
+			// If we came from the the addChild dialog, return the value to that dialog
 			processWindowEvent( new WindowEvent( this, WindowEvent.WINDOW_CLOSING) );
+			processWindowEvent( new WindowEvent( this, WindowEvent.WINDOW_CLOSED) );
 		}
 		catch (DataSourceCommitException e) {
 			// TODO Auto-generated catch block
@@ -127,6 +151,7 @@ public class AddParent extends JFrame {
 		gl.setVgap(33);
 		gl.setHgap(33);
 		setSize(640,480);
+		
 		// Create controls
 		lParentFirstName = new JLabel("Förnamn");
 		tParentFirstName = new JTextField();
@@ -134,8 +159,8 @@ public class AddParent extends JFrame {
 		tParentLastName = new JTextField();
 		lSSN = new JLabel("Personnummer");
 		tSSN = new JTextField();
-		
 		btnSave = new JButton("Spara/Ändra");
+		
 		// Append to the box
 		add(lParentFirstName);
 		add(tParentFirstName);

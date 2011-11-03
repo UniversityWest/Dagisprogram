@@ -8,6 +8,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javax.swing.JOptionPane;
+
+import com.alex.dagis.Parent.TwoParentSameSSNException;
 import com.alex.dagis.data.DataEntry;
 
 
@@ -21,6 +24,20 @@ import com.alex.dagis.data.DataEntry;
  */ 
 public class Child extends Person implements Serializable, Comparable<Child>, DataEntry
 {
+	public class NoParentException extends Exception{
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -4294792718438582700L;
+
+		@Override
+		public String getMessage() {
+			// TODO Auto-generated method stub
+			return "The ID does not match any parent registred in the system";
+		}
+		
+	}
 	public static final long serivalVersionUID = -7551256415496039326L;
 	private int mParentID;
 	/**
@@ -62,7 +79,12 @@ public class Child extends Person implements Serializable, Comparable<Child>, Da
 			int parentID = in.readInt();
 			if(parentID > 0)
 			{
-				setParent(parentID);
+				try {
+					setParent(parentID);
+				} catch (NoParentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -70,7 +92,9 @@ public class Child extends Person implements Serializable, Comparable<Child>, Da
 		} catch (ChildTooOldException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
+		} catch (TwoParentSameSSNException e) {
+			JOptionPane.showMessageDialog(null, "Två barn kan inte ha samma ID");
+		}
 		
 	}
 
@@ -131,11 +155,22 @@ public class Child extends Person implements Serializable, Comparable<Child>, Da
 	 */
 	private static final long serialVersionUID = 7288628473455905314L;
 	private Parent mParent;
-	public Parent getParent() {
-		return  Dagis.dataSource.getParentById(mParentID);
+	public Parent getParent(){
+		try{
+			return  Dagis.dataSource.getParentById(mParentID);
+		}catch(Exception e){
+			return null;
+		}
 	}
-	public void setParent(int id) {
-		this.mParentID = id;
+	public void setParent(int id) throws NoParentException {
+		// Check if the parent exists
+		for(Parent p : Dagis.dataSource.getParents()){
+			if(id == p.getSSN()){
+				this.mParentID = id;
+			}
+		}
+		// Otherwise throw an new exception
+		throw new NoParentException();
 	}
 	public static ArrayList<Child> children = new ArrayList<Child>();
 	

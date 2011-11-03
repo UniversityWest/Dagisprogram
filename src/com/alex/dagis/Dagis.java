@@ -17,6 +17,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
+import com.alex.dagis.Parent.TwoParentSameSSNException;
 import com.alex.dagis.data.DataSource;
 import com.alex.dagis.data.DataSourceLoadException;
 
@@ -52,7 +53,14 @@ public class Dagis {
 		Parent target = (dataSource.getParentById(parentID));
 		if(target == null)
 		{
-			target = new Parent(parentID);
+			try {
+				target = new Parent(parentID);
+			} catch (TwoParentSameSSNException e) {
+				// TODO Auto-generated catch block
+				JOptionPane.showMessageDialog(null, "Two föräldrar kan inte ha samma personnummer");
+				
+				e.printStackTrace();
+			}
 			dataSource.addParent(target);
 		}
 		return target;

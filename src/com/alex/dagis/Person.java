@@ -8,6 +8,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import com.alex.dagis.Parent.TwoParentSameSSNException;
 import com.alex.dagis.data.DataEntry;
 /***
  * An abstract class 'person'
@@ -15,6 +16,7 @@ import com.alex.dagis.data.DataEntry;
  *
  */
 public abstract class Person implements Serializable, DataEntry {
+	
 	/**
 	 * 
 	 */
@@ -65,7 +67,7 @@ public abstract class Person implements Serializable, DataEntry {
 		return mSSN;
 	}
 	@Override
-	public void setID(int id) {
+	public void setID(int id) throws TwoParentSameSSNException {
 		// TODO Auto-generated method stub
 		this.mSSN=id;
 	}

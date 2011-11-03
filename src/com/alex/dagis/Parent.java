@@ -14,6 +14,20 @@ import com.alex.dagis.data.DataEntry;
  *
  */
 public class Parent extends Person implements Serializable, DataEntry,Comparable<Parent>{
+	public class TwoParentSameSSNException extends MultipleIDItemException {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -5472405862467951113L;
+
+		@Override
+		public String getMessage() {
+			// TODO Auto-generated method stub
+			return "Två föräldrar kan inte ha samma personnummer";
+		}
+		
+	}
 	/**
 	 * 
 	 */
@@ -43,6 +57,9 @@ public class Parent extends Person implements Serializable, DataEntry,Comparable
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (TwoParentSameSSNException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}  
 		
 	}
@@ -51,7 +68,7 @@ public class Parent extends Person implements Serializable, DataEntry,Comparable
 		
 	}
 	
-	public Parent(int ssn)
+	public Parent(int ssn) throws TwoParentSameSSNException
 	{
 		setID(ssn);
 	}
@@ -97,8 +114,14 @@ public class Parent extends Person implements Serializable, DataEntry,Comparable
 		return mSSN;
 	}
 	@Override
-	public void setID(int id) {
+	public void setID(int id) throws TwoParentSameSSNException {
 		// TODO Auto-generated method stub
+		// Check if id is already present
+		for(Parent parent : Dagis.dataSource.getParents()){
+			if(parent.getSSN() == id){
+				throw new  TwoParentSameSSNException();
+			}
+		}
 		mSSN=id;
 	}
 }

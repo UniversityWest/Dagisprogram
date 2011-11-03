@@ -293,7 +293,12 @@ public class SingleFileProvider implements DataSource {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (Exception ex) {
-			throw ex;
+			try {
+				throw ex;
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		return null;
 	}
